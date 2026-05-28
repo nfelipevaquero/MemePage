@@ -201,7 +201,6 @@
             pointer-events: none;
             z-index: 999;
             box-shadow: 0 0 50px rgba(255,0,0,1);
-            /* Ralentizado a 2.2 segundos con un efecto de fricción/empuje realista */
             animation: flyOffAbsolute 2.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
         }
 
@@ -211,7 +210,6 @@
                 opacity: 1;
             }
             15% {
-                /* Pequeño retroceso o empuje inicial por la fuerza de la explosión */
                 transform: translate(calc(var(--fly-x) * -0.03), calc(var(--fly-y) * -0.03)) rotate(calc(var(--fly-rotate) * 0.05)) scale(1.05);
             }
             100% { 
@@ -255,7 +253,6 @@
                 filter: blur(2px);
             }
             100% { 
-                /* Se desplaza a su destino asignado por JS simulando gravedad/caída */
                 transform: translate(var(--x), calc(var(--y) + 80px)) scale(0); 
                 opacity: 0;
                 filter: blur(5px);
@@ -291,19 +288,19 @@
 
     <div class="ra-container" id="grid-ras"></div>
 
-    <img src="antonio.png" class="floating-meme" style="animation-delay: 0s; left: 5%;">
-    <img src="paz.jpg" class="floating-meme" style="animation-delay: 2s; left: 25%;">
-    <img src="alba.png" class="floating-meme" style="animation-delay: 4s; left: 45%;">
-    <img src="jl.jpg" class="floating-meme" style="animation-delay: 6s; left: 65%;">
-    <img src="francis.jpg" class="floating-meme" style="animation-delay: 8s; left: 85%;">
+    <img src="Antonio.png" class="floating-meme" style="animation-delay: 0s; left: 5%;">
+    <img src="Paz.jpg" class="floating-meme" style="animation-delay: 2s; left: 25%;">
+    <img src="Alba.png" class="floating-meme" style="animation-delay: 4s; left: 45%;">
+    <img src="JL.jpg" class="floating-meme" style="animation-delay: 6s; left: 65%;">
+    <img src="Francis.jpg" class="floating-meme" style="animation-delay: 8s; left: 85%;">
 
     <script>
         const profes = [
-            { nombre: "Antonio", img: "antonio.png" },
-            { nombre: "Paz", img: "paz.jpg" },
-            { nombre: "Alba", img: "alba.png" },
-            { nombre: "JL", img: "jl.jpg" },
-            { nombre: "Francis", img: "francis.jpg" }
+            { nombre: "Antonio", img: "Antonio.png" },
+            { nombre: "Paz", img: "Paz.jpg" },
+            { nombre: "Alba", img: "Alba.png" },
+            { nombre: "JL", img: "JL.jpg" },
+            { nombre: "Francis", img: "Francis.jpg" }
         ];
 
         const rasData = [
@@ -386,12 +383,11 @@
                 if (!card.classList.contains('suspendido')) {
                     card.classList.add('suspendido');
 
-                    // Dirección de vuelo épica y lenta
                     const angle = Math.random() * Math.PI * 2;
                     const distance = 1600; 
                     const flyX = Math.cos(angle) * distance + 'px';
                     const flyY = Math.sin(angle) * distance + 'px';
-                    const flyRotate = (Math.random() - 0.5) * 1800 + 'deg'; // Giros extremos
+                    const flyRotate = (Math.random() - 0.5) * 1800 + 'deg';
 
                     card.style.setProperty('--fly-x', flyX);
                     card.style.setProperty('--fly-y', flyY);
@@ -403,7 +399,6 @@
                     playExplosionSound();
                     triggerRealExplosionEffect(e.clientX, e.clientY);
 
-                    // Remoción limpia sincronizada con la nueva lentitud
                     setTimeout(() => card.remove(), 2200);
                 }
             });
@@ -458,9 +453,7 @@
             } catch(err) {}
         }
 
-        // SISTEMA DE EXPLOSIÓN VISUAL REALISTA SINFUL DE EMOJIS
         function triggerRealExplosionEffect(x, y) {
-            // 1. Generar la onda expansiva central blanca/lumínica
             const wave = document.createElement('div');
             wave.className = 'shockwave';
             wave.style.left = x + 'px';
@@ -468,36 +461,31 @@
             document.body.appendChild(wave);
             setTimeout(() => wave.remove(), 500);
 
-            // 2. Generar fragmentos de fuego y humo físico
-            const particleCount = 35; // Más partículas para mayor densidad
+            const particleCount = 35; 
             for (let i = 0; i < particleCount; i++) {
                 const p = document.createElement('div');
                 p.className = 'fire-particle';
                 
-                // Variación de tamaño para pedazos grandes y chispas pequeñas
                 const size = 6 + Math.random() * 22;
                 p.style.width = size + 'px';
                 p.style.height = size + 'px';
                 p.style.left = x + 'px';
                 p.style.top = y + 'px';
 
-                // Paleta de colores de fuego real (fuego vivo, fuego oscuro, ceniza/humo)
                 const fireColors = [
-                    'radial-gradient(circle, #ffffff 0%, #ffcc00 50%, #ff3300 100%)', // Núcleo ardiente
-                    'radial-gradient(circle, #ff9900 20%, #ff0000 80%, #330000 100%)', // Fuego medio
-                    'radial-gradient(circle, #ff5500 0%, #661100 70%, #222222 100%)',  // Brasa apagándose
-                    'radial-gradient(circle, #555555 10%, #222222 90%, transparent 100%)' // Humo denso
+                    'radial-gradient(circle, #ffffff 0%, #ffcc00 50%, #ff3300 100%)',
+                    'radial-gradient(circle, #ff9900 20%, #ff0000 80%, #330000 100%)',
+                    'radial-gradient(circle, #ff5500 0%, #661100 70%, #222222 100%)', 
+                    'radial-gradient(circle, #555555 10%, #222222 90%, transparent 100%)'
                 ];
                 p.style.background = fireColors[Math.floor(Math.random() * fireColors.length)];
 
-                // Vectores de dispersión radial desbocados
                 const angle = Math.random() * Math.PI * 2;
-                const distance = 80 + Math.random() * 220; // Radio de explosión amplio
+                const distance = 80 + Math.random() * 220;
                 p.style.setProperty('--x', Math.cos(angle) * distance + 'px');
                 p.style.setProperty('--y', Math.sin(angle) * distance + 'px');
 
                 document.body.appendChild(p);
-                // Limpieza del DOM al terminar la física
                 setTimeout(() => p.remove(), 800);
             }
         }
