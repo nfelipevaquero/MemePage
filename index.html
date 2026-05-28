@@ -1,0 +1,506 @@
+<!DOCTYPE html>
+<html lang="ca">
+<head>
+    <meta charset="UTF-8">
+    <meta name="viewport" content="width=device-width, initial-scale=1.0">
+    <link rel="icon" type="image/png" href="Francis.jpg">
+    <title>💥 Ordinària 3: RECUPERACIÓ TOTAL 💥</title>
+    <style>
+        :root {
+            --danger: #ff0000;
+            --success: #00ff00;
+            --dark: #0d0d0d;
+            --exam-paper: #f1f2f6;
+        }
+
+        body {
+            font-family: 'Courier New', Courier, monospace;
+            background-color: var(--dark);
+            color: #fff;
+            margin: 0;
+            padding: 20px;
+            padding-top: 0;
+            overflow-x: hidden;
+            background-image: linear-gradient(rgba(255, 0, 0, 0.05) 1px, transparent 1px),
+                              linear-gradient(90deg, rgba(255, 0, 0, 0.05) 1px, transparent 1px);
+            background-size: 15px 15px;
+        }
+
+        marquee {
+            font-size: 1.3rem;
+            color: black;
+            background: #ffcc00;
+            font-weight: bold;
+            padding: 8px;
+            border-bottom: 4px solid red;
+            font-family: 'Impact', sans-serif;
+            position: fixed;
+            top: 0;
+            left: 0;
+            width: 100%;
+            z-index: 1000;
+        }
+
+        header {
+            text-align: center;
+            padding: 20px;
+            border: 8px dashed var(--danger);
+            background: #1a1a1a;
+            margin-top: 80px;
+            margin-bottom: 30px;
+            box-shadow: 0 0 25px rgba(255, 0, 0, 0.7);
+            position: relative;
+            z-index: 10;
+        }
+
+        h1 { 
+            font-size: 3rem; 
+            color: #ff3333; 
+            margin: 0;
+            font-family: 'Impact', sans-serif;
+            text-shadow: 4px 4px 0px black;
+            text-transform: uppercase;
+        }
+
+        .timer-box {
+            background: #000;
+            color: #ff3333;
+            font-size: 2.2rem;
+            font-weight: bold;
+            padding: 10px;
+            border: 3px double #ff3333;
+            display: inline-block;
+            margin-top: 10px;
+            font-family: 'Courier New', monospace;
+            animation: blinkTimer 1s infinite alternate;
+        }
+
+        @keyframes blinkTimer {
+            0% { border-color: #ff0000; box-shadow: 0 0 5px red; }
+            100% { border-color: #000; box-shadow: 0 0 20px red; }
+        }
+        
+        .marcador {
+            font-size: 2rem;
+            background: red;
+            color: white;
+            padding: 8px 15px;
+            display: inline-block;
+            margin-top: 15px;
+            font-family: 'Impact', sans-serif;
+            border: 3px solid white;
+            margin-left: 10px;
+        }
+
+        .ra-container {
+            display: grid;
+            grid-template-columns: repeat(auto-fill, minmax(280px, 1fr));
+            gap: 20px;
+            max-width: 1400px;
+            margin: 0 auto;
+            padding-bottom: 50px;
+        }
+
+        /* Celda contenedora estable */
+        .ra-cell {
+            position: relative;
+            background: #1a1a1a;
+            border: 5px dashed red;
+            box-sizing: border-box;
+            transform: rotate(-2deg);
+            min-height: 380px;
+            display: flex;
+        }
+
+        /* El texto 0.0 fijo que vive en el fondo */
+        .suspenso-placeholder {
+            position: absolute;
+            top: 0; left: 0; width: 100%; height: 100%;
+            color: red;
+            display: flex;
+            align-items: center;
+            justify-content: center;
+            font-family: 'Impact', sans-serif;
+            font-size: 2.2rem;
+            text-align: center;
+            z-index: 1;
+            pointer-events: none;
+        }
+
+        /* Tarjeta de examen */
+        .ra-card {
+            background: var(--exam-paper);
+            color: #1e272e;
+            border-left: 15px solid #57606f;
+            border-top: 4px solid #ced6e0;
+            border-right: 4px solid #ced6e0;
+            border-bottom: 4px solid #ced6e0;
+            padding: 15px;
+            display: flex;
+            flex-direction: column;
+            align-items: center;
+            text-align: center;
+            cursor: pointer;
+            box-shadow: 5px 5px 0px rgba(255,255,255,0.1);
+            z-index: 2;
+            width: 100%;
+            box-sizing: border-box;
+            transform: rotate(2deg);
+            transition: box-shadow 0.1s;
+        }
+
+        /* Temblor violento únicamente en HOVER antes de explotar */
+        .ra-card:not(.suspendido):hover {
+            z-index: 5;
+            box-shadow: 10px 10px 0px rgba(255,0,0,0.5);
+            animation: preKaboom 0.2s infinite;
+        }
+
+        @keyframes preKaboom {
+            0% { transform: translate(2px, 1px) rotate(0deg); }
+            20% { transform: translate(-1px, -1px) rotate(-1deg); }
+            40% { transform: translate(-3px, 0px) rotate(1deg); }
+            60% { transform: translate(0px, 1px) rotate(0deg); }
+            80% { transform: translate(1px, -1px) rotate(1deg); }
+            100% { transform: translate(-1px, 1px) rotate(-1deg); }
+        }
+
+        .profe-img {
+            width: 110px;
+            height: 110px;
+            object-fit: cover;
+            border: 4px solid #1e272e;
+            border-radius: 4px;
+            margin-bottom: 10px;
+            pointer-events: none;
+        }
+
+        .ra-code {
+            font-weight: bold;
+            font-size: 1.2rem;
+            color: #fff;
+            background: #1e272e;
+            padding: 5px;
+            width: 90%;
+            border-radius: 2px;
+            pointer-events: none;
+        }
+
+        .ra-desc {
+            font-family: 'Courier New', monospace;
+            font-size: 0.85rem;
+            font-weight: bold;
+            margin-top: 10px;
+            color: #2f3542;
+            text-align: left;
+            pointer-events: none;
+        }
+
+        /* Animación ralentizada y épica de salida volando */
+        .ra-card.suspendido {
+            pointer-events: none;
+            z-index: 999;
+            box-shadow: 0 0 50px rgba(255,0,0,1);
+            /* Ralentizado a 2.2 segundos con un efecto de fricción/empuje realista */
+            animation: flyOffAbsolute 2.2s cubic-bezier(0.1, 0.8, 0.3, 1) forwards;
+        }
+
+        @keyframes flyOffAbsolute {
+            0% { 
+                transform: translate(0, 0) rotate(0deg) scale(1);
+                opacity: 1;
+            }
+            15% {
+                /* Pequeño retroceso o empuje inicial por la fuerza de la explosión */
+                transform: translate(calc(var(--fly-x) * -0.03), calc(var(--fly-y) * -0.03)) rotate(calc(var(--fly-rotate) * 0.05)) scale(1.05);
+            }
+            100% { 
+                transform: translate(var(--fly-x), var(--fly-y)) rotate(var(--fly-rotate)) scale(0);
+                opacity: 0;
+            }
+        }
+
+        /* ONDA DE CHOQUE REALISTA (Flash del epicentro) */
+        .shockwave {
+            position: fixed;
+            border-radius: 50%;
+            background: radial-gradient(circle, rgba(255,255,255,1) 0%, rgba(255,150,0,0.8) 40%, rgba(255,0,0,0) 70%);
+            pointer-events: none;
+            z-index: 9998;
+            transform: translate(-50%, -50%);
+            animation: blowWave 0.5s ease-out forwards;
+        }
+
+        @keyframes blowWave {
+            0% { width: 0px; height: 0px; opacity: 1; }
+            100% { width: 450px; height: 450px; opacity: 0; }
+        }
+
+        /* PARTÍCULAS DE FUEGO Y METEORITOS REALES */
+        .fire-particle {
+            position: fixed;
+            border-radius: 50%;
+            pointer-events: none;
+            z-index: 9999;
+            animation: firePhysics 0.8s cubic-bezier(0.25, 0.46, 0.45, 0.94) forwards;
+        }
+
+        @keyframes firePhysics {
+            0% { 
+                transform: translate(-50%, -50%) scale(1); 
+                opacity: 1;
+                filter: blur(0px);
+            }
+            50% {
+                filter: blur(2px);
+            }
+            100% { 
+                /* Se desplaza a su destino asignado por JS simulando gravedad/caída */
+                transform: translate(var(--x), calc(var(--y) + 80px)) scale(0); 
+                opacity: 0;
+                filter: blur(5px);
+            }
+        }
+
+        .floating-meme {
+            position: fixed;
+            width: 90px;
+            height: 90px;
+            object-fit: cover;
+            pointer-events: none;
+            opacity: 0.25;
+            z-index: -1;
+            animation: floatAround 10s linear infinite;
+        }
+
+        @keyframes floatAround {
+            0% { transform: translate(-10vw, 100vh) rotate(0deg); }
+            100% { transform: translate(110vw, -20vh) rotate(360deg); }
+        }
+    </style>
+</head>
+<body>
+
+    <marquee scrollamount="12">⚠️ EXAMEN EN CURS: Ordinària 3 (DAM) - Prohibits els telèfons mòbils, obrir el ChatGPT i plorar a la taula. Revisa els teus RAs abans de lliurar a la plataforma! ⚠️</marquee>
+
+    <header>
+        <h1>📝 EXAMEN FINAL: ORDINÀRIA 3 📝</h1>
+        <div class="timer-box">TEMPS RESTANT: <span id="timer">45:00</span></div>
+        <div class="marcador">RAs REVENTATS: <span id="contador">0</span>/49</div>
+    </header>
+
+    <div class="ra-container" id="grid-ras"></div>
+
+    <img src="antonio.png" class="floating-meme" style="animation-delay: 0s; left: 5%;">
+    <img src="paz.jpg" class="floating-meme" style="animation-delay: 2s; left: 25%;">
+    <img src="alba.png" class="floating-meme" style="animation-delay: 4s; left: 45%;">
+    <img src="jl.jpg" class="floating-meme" style="animation-delay: 6s; left: 65%;">
+    <img src="francis.jpg" class="floating-meme" style="animation-delay: 8s; left: 85%;">
+
+    <script>
+        const profes = [
+            { nombre: "Antonio", img: "antonio.png" },
+            { nombre: "Paz", img: "paz.jpg" },
+            { nombre: "Alba", img: "alba.png" },
+            { nombre: "JL", img: "jl.jpg" },
+            { nombre: "Francis", img: "francis.jpg" }
+        ];
+
+        const rasData = [
+            { cod: "0373-RA2", desc: "Utilitza llenguatges de marques per a la transmissió i presentació de informació a través del web..." },
+            { cod: "0373-RA3", desc: "Accedeix i manipula documents web utilitzant llenguatges de guions de client." },
+            { cod: "0483-RA4", desc: "Gestiona sistemes operatius utilitzant comandes i eines gràfiques..." },
+            { cod: "0483-RA7", desc: "Elabora documentació valorant i utilitzant aplicacions informàtiques de propòsit general" },
+            { cod: "0484-RA2", desc: "Crea bases de dades definint-ne l'estructura i les característiques..." },
+            { cod: "0484-RA3", desc: "Consulta la informació emmagatzemada en una base de dades fent servir assistents..." },
+            { cod: "0484-RA4", desc: "Modifica la informació emmagatzemada a la base de dades utilitzant assistents..." },
+            { cod: "0485-RA3", desc: "Escriu i depura codi, analitzant i utilitzant les estructures de control..." },
+            { cod: "0485-RA4", desc: "Desenvolupa programes organitzats en classes analitzant i aplicant els principis de la POO." },
+            { cod: "0485-RA5", desc: "Realitza operacions d'entrada i sortida d'informació, utilitzant procediments específics..." },
+            { cod: "0485-RA6", desc: "Escriu programes que manipulin informació seleccionant i utilitzant tipus avançats..." },
+            { cod: "0485-RA7", desc: "Desenvolupa programes aplicant característiques avançades dels llenguatges orientats a objectes..." },
+            { cod: "0487-RA3", desc: "Verifica el funcionament de programes dissenyant i realitzant proves." },
+            { cod: "0487-RA4", desc: "Optimitza codi utilitzant les eines disponibles a l'entorn de desenvolupament." },
+            { cod: "0487-RA5", desc: "Genera diagrames de classes valorant-ne la importància en el desenvolupament d'aplicacions..." },
+            { cod: "0615-(09)-RA1", desc: "Planificar la creació d'una interfície web valorant i aplicant especificacions de disseny." },
+            { cod: "0615-(09)-RA2", desc: "Crear interfícies web homogènies definint i aplicant estils." },
+            { cod: "0615-(09)-RA3", desc: "Preparar arxius multimèdia per al web, analitzant-ne les característiques..." },
+            { cod: "0615-(09)-RA4", desc: "Integrar materials multimèdia en interfícies web." },
+            { cod: "0488-(07)-RA5", desc: "Desenvolupar aplicacions web interactives amb esdeveniments i animacions." },
+            { cod: "0488-(07)-RA6", desc: "Verificar l'accessibilitat i usabilitat de les aplicacions web." },
+            { cod: "0373-RA7", desc: "Efectua operacions amb sistemes empresarials de gestió d'informació..." },
+            { cod: "0483-RA2", desc: "Instal·la sistemes operatius planificant el procés i interpretant documentació tècnica." },
+            { cod: "0843-RA3", desc: "Gestiona la informació del sistema identificant les estructures d'emmagatzematge..." },
+            { cod: "0483-RA4", desc: "Gestiona sistemes operatius utilitzant comandes i eines gràfiques..." },
+            { cod: "0483-RA5", desc: "Interconnecta sistemes en xarxa configurant dispositius i protocols." },
+            { cod: "0483-6", desc: "Treballa amb sistemes en xarxa gestionant-ne els recursos..." },
+            { cod: "0483-RA7", desc: "Elabora documentació valorant i utilitzant aplicacions informàtiques de propòsit general" },
+            { cod: "0484-RA4", desc: "Modifica la informació emmagatzemada a la base de dades..." },
+            { cod: "0484-RA5", desc: "Desenvolupa procediments emmagatzemats avaluant i utilitzant les sentències del llenguatge..." },
+            { cod: "0484-RA7", desc: "Gestiona la informació emmagatzemada en bases de dades no relacionals..." },
+            { cod: "0485-RA5", desc: "Realitza operacions d'entrada i sortida d'informació..." },
+            { cod: "0485-RA9", desc: "Gestiona informació emmagatzemada en bases de dades mantenint la integritat..." },
+            { cod: "0487-RA4", desc: "Optimitza codi utilitzant les eines disponibles a l'entorn de desenvolupament." },
+            { cod: "0487-RA6", desc: "Genera diagrames de comportament valorant-ne la importància..." },
+            { cod: "DAW-0615-RA1", desc: "Planifica la creació d'una interfície web valorant i aplicant especificacions de disseny." },
+            { cod: "DAW-0615-RA2", desc: "Crea interfícies web homogènies definint i aplicant estils." },
+            { cod: "DAW-0615-RA3", desc: "Prepara arxius multimèdia per al web..." },
+            { cod: "DAW-0615-RA4", desc: "Integra contingut multimèdia en documents web..." },
+            { cod: "DAW-0615-RA5", desc: "Desenvolupa interfícies web accessibles..." },
+            { cod: "DAW-0615-RA6", desc: "Desenvolupa interfícies web amigables..." },
+            { cod: "DAM-0488-RA1", desc: "Genera interfícies gràfiques d'usuari mitjançant editors visuals..." },
+            { cod: "DAM-0488-RA2", desc: "Genera interfícies naturals d'usuari utilitzant eines visuals." },
+            { cod: "DAM-0488-RA3", desc: "Crea components visuals valorant i emprant eens específiques." },
+            { cod: "DAM-0488-RA4", desc: "Dissenya interfícies gràfiques identificant i aplicant criteris d'usabilitat i accessibilitat." },
+            { cod: "DAM-0488-RA5", desc: "Crea informes avaluant i utilitzant herramientas gràfiques." },
+            { cod: "DAM-0488-RA6", desc: "Documenta aplicacions seleccionant i utilitzant herramientas específiques." },
+            { cod: "DAM-0488-RA7", desc: "Prepara aplicacions per a la distribució..." },
+            { cod: "DAM-0488-RA8", desc: "Avalua el funcionament d'aplicacions dissenyant i executant proves." }
+        ];
+
+        const grid = document.getElementById('grid-ras');
+        const contadorElement = document.getElementById('contador');
+        let DocsSuspendidos = 0;
+
+        rasData.forEach((ra, index) => {
+            const profe = profes[index % profes.length];
+            
+            const cell = document.createElement('div');
+            cell.className = 'ra-cell';
+            
+            const placeholder = document.createElement('div');
+            placeholder.className = 'suspenso-placeholder';
+            placeholder.innerHTML = `<div>❌<br>0.0<br>NO APTE</div>`;
+            cell.appendChild(placeholder);
+
+            const card = document.createElement('div');
+            card.className = 'ra-card';
+            card.innerHTML = `
+                <img src="${profe.img}" alt="${profe.nombre}" class="profe-img" onerror="this.src='https://dummyimage.com/120x120/2e3131/ffffff.png&text=${profe.nombre}'">
+                <div class="ra-code">${ra.cod}</div>
+                <div class="ra-desc">${ra.desc}</div>
+                <div style="margin-top:10px; font-weight:bold; color:red; font-size:0.8rem;">Catedràtic: ${profe.nombre}</div>
+            `;
+
+            card.addEventListener('click', function(e) {
+                if (!card.classList.contains('suspendido')) {
+                    card.classList.add('suspendido');
+
+                    // Dirección de vuelo épica y lenta
+                    const angle = Math.random() * Math.PI * 2;
+                    const distance = 1600; 
+                    const flyX = Math.cos(angle) * distance + 'px';
+                    const flyY = Math.sin(angle) * distance + 'px';
+                    const flyRotate = (Math.random() - 0.5) * 1800 + 'deg'; // Giros extremos
+
+                    card.style.setProperty('--fly-x', flyX);
+                    card.style.setProperty('--fly-y', flyY);
+                    card.style.setProperty('--fly-rotate', flyRotate);
+
+                    DocsSuspendidos++;
+                    contadorElement.innerText = DocsSuspendidos;
+                    
+                    playExplosionSound();
+                    triggerRealExplosionEffect(e.clientX, e.clientY);
+
+                    // Remoción limpia sincronizada con la nueva lentitud
+                    setTimeout(() => card.remove(), 2200);
+                }
+            });
+
+            cell.appendChild(card);
+            grid.appendChild(cell);
+        });
+
+        // CRONÓMETRO (45 min)
+        let totalSeconds = 45 * 60;
+        const timerElement = document.getElementById('timer');
+        
+        const countdown = setInterval(() => {
+            if (totalSeconds <= 0) {
+                clearInterval(countdown);
+                timerElement.innerText = "¡RECOLLIR EXAMEN!";
+                alert("S'ha acabat el temps! Has suspès automàticament.");
+                return;
+            }
+            totalSeconds--;
+            let minutes = Math.floor(totalSeconds / 60);
+            let seconds = totalSeconds % 60;
+            minutes = minutes < 10 ? '0' + minutes : minutes;
+            seconds = seconds < 10 ? '0' + seconds : seconds;
+            timerElement.innerText = `${minutes}:${seconds}`;
+            if (totalSeconds < 300) {
+                timerElement.style.color = 'yellow';
+                timerElement.style.background = 'red';
+            }
+        }, 1000);
+
+        function playExplosionSound() {
+            try {
+                const audioCtx = new (window.AudioContext || window.webkitAudioContext)();
+                const bufferSize = audioCtx.sampleRate * 0.4;
+                const buffer = audioCtx.createBuffer(1, bufferSize, audioCtx.sampleRate);
+                const data = buffer.getChannelData(0);
+                for (let i = 0; i < bufferSize; i++) { data[i] = Math.random() * 2 - 1; }
+                const noise = audioCtx.createBufferSource();
+                noise.buffer = buffer;
+                const filter = audioCtx.createBiquadFilter();
+                filter.type = 'lowpass';
+                filter.frequency.setValueAtTime(800, audioCtx.currentTime);
+                filter.frequency.exponentialRampToValueAtTime(50, audioCtx.currentTime + 0.3);
+                const gain = audioCtx.createGain();
+                gain.gain.setValueAtTime(0.5, audioCtx.currentTime);
+                gain.gain.linearRampToValueAtTime(0.01, audioCtx.currentTime + 0.3);
+                noise.connect(filter);
+                filter.connect(gain);
+                gain.connect(audioCtx.destination);
+                noise.start();
+            } catch(err) {}
+        }
+
+        // SISTEMA DE EXPLOSIÓN VISUAL REALISTA SINFUL DE EMOJIS
+        function triggerRealExplosionEffect(x, y) {
+            // 1. Generar la onda expansiva central blanca/lumínica
+            const wave = document.createElement('div');
+            wave.className = 'shockwave';
+            wave.style.left = x + 'px';
+            wave.style.top = y + 'px';
+            document.body.appendChild(wave);
+            setTimeout(() => wave.remove(), 500);
+
+            // 2. Generar fragmentos de fuego y humo físico
+            const particleCount = 35; // Más partículas para mayor densidad
+            for (let i = 0; i < particleCount; i++) {
+                const p = document.createElement('div');
+                p.className = 'fire-particle';
+                
+                // Variación de tamaño para pedazos grandes y chispas pequeñas
+                const size = 6 + Math.random() * 22;
+                p.style.width = size + 'px';
+                p.style.height = size + 'px';
+                p.style.left = x + 'px';
+                p.style.top = y + 'px';
+
+                // Paleta de colores de fuego real (fuego vivo, fuego oscuro, ceniza/humo)
+                const fireColors = [
+                    'radial-gradient(circle, #ffffff 0%, #ffcc00 50%, #ff3300 100%)', // Núcleo ardiente
+                    'radial-gradient(circle, #ff9900 20%, #ff0000 80%, #330000 100%)', // Fuego medio
+                    'radial-gradient(circle, #ff5500 0%, #661100 70%, #222222 100%)',  // Brasa apagándose
+                    'radial-gradient(circle, #555555 10%, #222222 90%, transparent 100%)' // Humo denso
+                ];
+                p.style.background = fireColors[Math.floor(Math.random() * fireColors.length)];
+
+                // Vectores de dispersión radial desbocados
+                const angle = Math.random() * Math.PI * 2;
+                const distance = 80 + Math.random() * 220; // Radio de explosión amplio
+                p.style.setProperty('--x', Math.cos(angle) * distance + 'px');
+                p.style.setProperty('--y', Math.sin(angle) * distance + 'px');
+
+                document.body.appendChild(p);
+                // Limpieza del DOM al terminar la física
+                setTimeout(() => p.remove(), 800);
+            }
+        }
+    </script>
+</body>
+</html>
